@@ -55,15 +55,22 @@ const PDFViewer = () => {
     if (containerRef.current && pageDimensions) {
       // 减去 padding (40px * 2 = 80px) 和 滚动条余量 (20px)
       const availableWidth = containerRef.current.clientWidth - 100;
-      fitWidth(availableWidth, pageDimensions.width);
+
+      // 计算目标宽度：如果是双页模式且有下一页，则为两倍宽度加间距(20px)
+      const isDouble = viewMode === "double" && currentPage < numPages;
+      const targetWidth = isDouble
+        ? pageDimensions.width * 2 + 20
+        : pageDimensions.width;
+
+      fitWidth(availableWidth, targetWidth);
     }
   };
 
   // 处理函数：适应高度
   const handleFitHeight = () => {
     if (containerRef.current && pageDimensions) {
-      // 减去 padding (40px * 2)
-      const availableHeight = containerRef.current.clientHeight - 80;
+      // 减去：标题(48px) + 工具栏(40px) + 画布内边距(80px) = 168px
+      const availableHeight = containerRef.current.clientHeight - 168;
       fitHeight(availableHeight, pageDimensions.height);
     }
   };
@@ -72,11 +79,17 @@ const PDFViewer = () => {
   const handleFitPage = () => {
     if (containerRef.current && pageDimensions) {
       const availableWidth = containerRef.current.clientWidth - 100;
-      const availableHeight = containerRef.current.clientHeight - 80;
+      const availableHeight = containerRef.current.clientHeight - 168;
+
+      const isDouble = viewMode === "double" && currentPage < numPages;
+      const targetWidth = isDouble
+        ? pageDimensions.width * 2 + 20
+        : pageDimensions.width;
+
       fitPage(
         availableWidth,
         availableHeight,
-        pageDimensions.width,
+        targetWidth,
         pageDimensions.height
       );
     }
