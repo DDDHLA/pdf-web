@@ -1,3 +1,4 @@
+import React, { useState, useRef } from "react";
 import { pdfjs } from "react-pdf";
 import { usePDFViewer } from "./hooks/usePDFViewer";
 import { UploadArea } from "./components/UploadArea";
@@ -28,9 +29,71 @@ const PDFViewer = () => {
     zoomIn,
     zoomOut,
     resetZoom,
+    setCustomScale,
+    fitWidth,
+    fitHeight,
+    fitPage,
     rotatePage,
     downloadPDF,
+    viewMode,
+    setViewMode,
+    sidebarVisible,
+    setSidebarVisible,
   } = usePDFViewer();
+
+  // 状态：存储页面原始尺寸
+  const [pageDimensions, setPageDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
+  // 引用：容器 DOM，用于计算可用空间及全屏
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 处理函数：适应宽度
+  const handleFitWidth = () => {
+    if (containerRef.current && pageDimensions) {
+      // 减去 padding (40px * 2 = 80px) 和 滚动条余量 (20px)
+      const availableWidth = containerRef.current.clientWidth - 100;
+      fitWidth(availableWidth, pageDimensions.width);
+    }
+  };
+
+  // 处理函数：适应高度
+  const handleFitHeight = () => {
+    if (containerRef.current && pageDimensions) {
+      // 减去 padding (40px * 2)
+      const availableHeight = containerRef.current.clientHeight - 80;
+      fitHeight(availableHeight, pageDimensions.height);
+    }
+  };
+
+  // 处理函数：适应页面 (同时考虑宽和高)
+  const handleFitPage = () => {
+    if (containerRef.current && pageDimensions) {
+      const availableWidth = containerRef.current.clientWidth - 100;
+      const availableHeight = containerRef.current.clientHeight - 80;
+      fitPage(
+        availableWidth,
+        availableHeight,
+        pageDimensions.width,
+        pageDimensions.height
+      );
+    }
+  };
+
+  // 处理函数：全屏切换
+  const handleFullscreen = () => {
+    if (containerRef.current) {
+      if (!document.fullscreenElement) {
+        containerRef.current.requestFullscreen().catch((err) => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  };
 
   return (
     <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
@@ -40,23 +103,40 @@ const PDFViewer = () => {
       {/* PDF 查看器（有文件时显示） */}
       {file && (
         <>
-          {/* 左侧缩略图面板 */}
-          <ThumbnailPanel
-            file={file}
-            numPages={numPages}
-            currentPage={currentPage}
-            onPageClick={goToPage}
-          />
+          {/* 左侧缩略图面板 (受控显示) */}
+          {sidebarVisible && (
+            <ThumbnailPanel
+              file={file}
+              numPages={numPages}
+              currentPage={currentPage}
+              onPageClick={goToPage}
+            />
+          )}
 
           {/* 右侧主内容区 */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div
+            ref={containerRef} // 绑定 Ref
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              minWidth: 0,
+              overflow: "hidden",
+              position: "relative", // 为全屏做准备
+              background: "#f5f5f5", // 全屏时需要背景色
+            }}
+          >
             {/* PDF 画布 */}
             <PDFCanvas
               file={file}
+              numPages={numPages}
               currentPage={currentPage}
               scale={scale}
               rotation={rotation}
               onDocumentLoadSuccess={onDocumentLoadSuccess}
+              onPageLoadSuccess={setPageDimensions} // 获取页面尺寸
+              viewMode={viewMode}
             />
 
             {/* 底部工具栏 */}
@@ -73,6 +153,17 @@ const PDFViewer = () => {
               onResetZoom={resetZoom}
               onRotate={rotatePage}
               onDownload={downloadPDF}
+              onScaleChange={setCustomScale}
+              // 绑定新功能
+              onFitWidth={handleFitWidth}
+              onFitHeight={handleFitHeight}
+              onFitPage={handleFitPage}
+              onFullscreen={handleFullscreen}
+              // 绑定视图模式
+              viewMode={viewMode}
+              onToggleViewMode={setViewMode}
+              sidebarVisible={sidebarVisible}
+              onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
             />
           </div>
         </>

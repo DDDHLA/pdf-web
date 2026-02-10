@@ -6,6 +6,8 @@ export const usePDFViewer = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
   const [rotation, setRotation] = useState<number>(0);
+  const [viewMode, setViewMode] = useState<'single' | 'double'>('single');
+  const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
   // 文件上传处理
   const handleFileUpload = useCallback((uploadedFile: File) => {
@@ -61,6 +63,27 @@ export const usePDFViewer = () => {
     setScale(newScale);
   }, []);
 
+  // 适应控制
+  const fitWidth = useCallback((containerWidth: number, pageWidth: number) => {
+    if (containerWidth && pageWidth) {
+      setScale(containerWidth / pageWidth);
+    }
+  }, []);
+
+  const fitHeight = useCallback((containerHeight: number, pageHeight: number) => {
+    if (containerHeight && pageHeight) {
+      setScale(containerHeight / pageHeight);
+    }
+  }, []);
+
+  const fitPage = useCallback((containerWidth: number, containerHeight: number, pageWidth: number, pageHeight: number) => {
+    if (containerWidth && containerHeight && pageWidth && pageHeight) {
+      const scaleX = containerWidth / pageWidth;
+      const scaleY = containerHeight / pageHeight;
+      setScale(Math.min(scaleX, scaleY));
+    }
+  }, []);
+
   // 旋转控制
   const rotatePage = useCallback(() => {
     setRotation((prev) => (prev + 90) % 360);
@@ -99,9 +122,18 @@ export const usePDFViewer = () => {
     zoomOut,
     resetZoom,
     setCustomScale,
+    // 适应控制
+    fitWidth,
+    fitHeight,
+    fitPage,
     // 旋转
     rotatePage,
     // 下载
     downloadPDF,
+    // 视图模式
+    viewMode,
+    setViewMode,
+    sidebarVisible,
+    setSidebarVisible,
   };
 };
