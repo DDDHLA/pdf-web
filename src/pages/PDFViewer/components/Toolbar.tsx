@@ -1,9 +1,5 @@
 import { Button, Space, Slider, Select } from "antd";
 import {
-  StepBackwardOutlined,
-  LeftOutlined,
-  RightOutlined,
-  StepForwardOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
   FullscreenOutlined,
@@ -14,6 +10,7 @@ import {
   EyeOutlined,
   BorderOutlined,
   SplitCellsOutlined,
+  RotateRightOutlined,
 } from "@ant-design/icons";
 
 interface ToolbarProps {
@@ -41,6 +38,7 @@ export const Toolbar = ({
   onZoomIn,
   onZoomOut,
   onResetZoom,
+  onRotate,
   onScaleChange,
   onFitWidth,
   onFitHeight,
@@ -142,6 +140,13 @@ export const Toolbar = ({
             onClick={onResetZoom}
             title="重置视图"
           />
+          <Button
+            type="text"
+            size="small"
+            icon={<RotateRightOutlined />}
+            onClick={onRotate}
+            title="旋转"
+          />
         </Space>
       </div>
 
@@ -160,14 +165,14 @@ export const Toolbar = ({
           value={Math.round(scale * 100) + "%"}
           style={{ width: "80px", fontSize: "12px" }}
           options={[
-            { value: 0.5, label: "50%" },
-            { value: 0.75, label: "75%" },
-            { value: 1, label: "100%" },
-            { value: 1.25, label: "125%" },
-            { value: 1.5, label: "150%" },
-            { value: 2, label: "200%" },
+            { value: "50%", label: "50%" },
+            { value: "75%", label: "75%" },
+            { value: "100%", label: "100%" },
+            { value: "125%", label: "125%" },
+            { value: "150%", label: "150%" },
+            { value: "200%", label: "200%" },
           ]}
-          onChange={(v) => onScaleChange(v)}
+          onChange={(v: string) => onScaleChange(parseFloat(v) / 100)}
         />
         <Button
           type="text"
