@@ -47,8 +47,10 @@ const PDFViewer = () => {
     height: number;
   } | null>(null);
 
-  // 引用：容器 DOM，用于计算可用空间及全屏
+  // 引用：容器 DOM，用于计算可用空间
   const containerRef = useRef<HTMLDivElement>(null);
+  // 引用：整个查看器区域，用于全屏切换
+  const viewerRef = useRef<HTMLDivElement>(null);
 
   // 处理函数：适应宽度
   const handleFitWidth = () => {
@@ -97,9 +99,9 @@ const PDFViewer = () => {
 
   // 处理函数：全屏切换
   const handleFullscreen = () => {
-    if (containerRef.current) {
+    if (viewerRef.current) {
       if (!document.fullscreenElement) {
-        containerRef.current.requestFullscreen().catch((err) => {
+        viewerRef.current.requestFullscreen().catch((err) => {
           console.error(`Error attempting to enable fullscreen: ${err.message}`);
         });
       } else {
@@ -109,7 +111,15 @@ const PDFViewer = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+    <div
+      ref={viewerRef}
+      style={{
+        display: "flex",
+        height: "100%",
+        overflow: "hidden",
+        background: "#f5f5f5", // 确保全屏时有背景色
+      }}
+    >
       {/* 上传区域（无文件时显示） */}
       {!file && <UploadArea onFileUpload={handleFileUpload} />}
 
