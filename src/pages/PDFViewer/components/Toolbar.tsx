@@ -17,13 +17,7 @@ import {
 } from "@ant-design/icons";
 
 interface ToolbarProps {
-  currentPage: number;
-  numPages: number;
   scale: number;
-  onFirstPage: () => void;
-  onPrevPage: () => void;
-  onNextPage: () => void;
-  onLastPage: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
@@ -35,16 +29,15 @@ interface ToolbarProps {
   onFitHeight?: () => void;
   onFitPage?: () => void;
   onFullscreen?: () => void;
+  // 视图模式属性
+  viewMode: "single" | "double";
+  onToggleViewMode: (mode: "single" | "double") => void;
+  sidebarVisible: boolean;
+  onToggleSidebar: () => void;
 }
 
 export const Toolbar = ({
-  currentPage,
-  numPages,
   scale,
-  onFirstPage,
-  onPrevPage,
-  onNextPage,
-  onLastPage,
   onZoomIn,
   onZoomOut,
   onResetZoom,
@@ -66,62 +59,12 @@ export const Toolbar = ({
         padding: "4px 16px",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "center",
         height: "40px",
         userSelect: "none",
+        gap: "20px",
       }}
     >
-      {/* 左侧：页面导航 (复刻图1样式) */}
-      <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-        <Button
-          type="text"
-          size="small"
-          icon={
-            <StepBackwardOutlined style={{ fontSize: "12px", color: "#666" }} />
-          }
-          disabled={currentPage === 1}
-          onClick={onFirstPage}
-        />
-        <Button
-          type="text"
-          size="small"
-          icon={<LeftOutlined style={{ fontSize: "12px", color: "#666" }} />}
-          disabled={currentPage === 1}
-          onClick={onPrevPage}
-        />
-        <div
-          style={{
-            margin: "0 4px",
-            padding: "2px 12px",
-            background: "white",
-            border: "1px solid #ccc",
-            borderRadius: "12px",
-            fontSize: "13px",
-            minWidth: "60px",
-            textAlign: "center",
-            boxShadow: "inset 0 1px 2px rgba(0,0,0,0.1)",
-          }}
-        >
-          {currentPage} / {numPages}
-        </div>
-        <Button
-          type="text"
-          size="small"
-          icon={<RightOutlined style={{ fontSize: "12px", color: "#666" }} />}
-          disabled={currentPage === numPages}
-          onClick={onNextPage}
-        />
-        <Button
-          type="text"
-          size="small"
-          icon={
-            <StepForwardOutlined style={{ fontSize: "12px", color: "#666" }} />
-          }
-          disabled={currentPage === numPages}
-          onClick={onLastPage}
-        />
-      </div>
-
       {/* 中间：视图工具栏 (复刻图1样式) */}
       <div
         style={{

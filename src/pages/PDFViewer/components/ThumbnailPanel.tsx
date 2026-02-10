@@ -1,11 +1,22 @@
 import { Document, Page } from "react-pdf";
-import { Spin } from "antd";
+import { Spin, Button } from "antd";
+import {
+  StepBackwardOutlined,
+  LeftOutlined,
+  RightOutlined,
+  StepForwardOutlined,
+} from "@ant-design/icons";
 
 interface ThumbnailPanelProps {
   file: File | null;
   numPages: number;
   currentPage: number;
   onPageClick: (page: number) => void;
+  // 新增分页导航属性
+  onFirstPage: () => void;
+  onPrevPage: () => void;
+  onNextPage: () => void;
+  onLastPage: () => void;
 }
 
 export const ThumbnailPanel = ({
@@ -13,6 +24,10 @@ export const ThumbnailPanel = ({
   numPages,
   currentPage,
   onPageClick,
+  onFirstPage,
+  onPrevPage,
+  onNextPage,
+  onLastPage,
 }: ThumbnailPanelProps) => {
   if (!file || numPages === 0) {
     return null;
@@ -21,26 +36,38 @@ export const ThumbnailPanel = ({
   return (
     <div
       style={{
-        width: "200px",
-        minWidth: "200px",
+        width: "250px", // 稍微加宽一点以容纳分页器
+        minWidth: "250px",
         background: "white",
         borderRight: "1px solid #e0e0e0",
-        overflowY: "auto",
-        padding: "16px",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%", // 占满高度
       }}
     >
+      {/* 顶部标题 */}
       <div
         style={{
+          height: "48px",
+          padding: "0 16px",
+          display: "flex",
+          alignItems: "center",
+          borderBottom: "1px solid #f0f0f0",
           fontSize: "16px",
           fontWeight: 500,
-          marginBottom: "16px",
           color: "#333",
+          flexShrink: 0,
         }}
       >
         缩略图
       </div>
+
+      {/* 中间缩略图列表 (可滚动) */}
       <div
         style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "16px",
           display: "flex",
           flexDirection: "column",
           gap: "12px",
@@ -83,7 +110,7 @@ export const ThumbnailPanel = ({
             >
               <Page
                 pageNumber={index + 1}
-                width={168}
+                width={200} // 适配新的宽度
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
                 loading={
@@ -106,6 +133,64 @@ export const ThumbnailPanel = ({
             </div>
           ))}
         </Document>
+      </div>
+
+      {/* 底部：分页导航 (固定在底部) */}
+      <div
+        style={{
+          height: "40px",
+          padding: "0 12px",
+          borderTop: "1px solid #e0e0e0",
+          background: "#fafafa",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "4px",
+          flexShrink: 0,
+        }}
+      >
+        <Button
+          type="text"
+          size="small"
+          icon={<StepBackwardOutlined style={{ fontSize: "12px", color: "#666" }} />}
+          disabled={currentPage === 1}
+          onClick={onFirstPage}
+        />
+        <Button
+          type="text"
+          size="small"
+          icon={<LeftOutlined style={{ fontSize: "12px", color: "#666" }} />}
+          disabled={currentPage === 1}
+          onClick={onPrevPage}
+        />
+        <div
+          style={{
+            margin: "0 4px",
+            padding: "2px 10px",
+            background: "white",
+            border: "1px solid #d9d9d9",
+            borderRadius: "4px",
+            fontSize: "12px",
+            minWidth: "50px",
+            textAlign: "center",
+          }}
+        >
+          {currentPage} / {numPages}
+        </div>
+        <Button
+          type="text"
+          size="small"
+          icon={<RightOutlined style={{ fontSize: "12px", color: "#666" }} />}
+          disabled={currentPage === numPages}
+          onClick={onNextPage}
+        />
+        <Button
+          type="text"
+          size="small"
+          icon={<StepForwardOutlined style={{ fontSize: "12px", color: "#666" }} />}
+          disabled={currentPage === numPages}
+          onClick={onLastPage}
+        />
       </div>
     </div>
   );

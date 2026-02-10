@@ -110,6 +110,10 @@ const PDFViewer = () => {
               numPages={numPages}
               currentPage={currentPage}
               onPageClick={goToPage}
+              onFirstPage={goToFirstPage}
+              onPrevPage={goToPrevPage}
+              onNextPage={goToNextPage}
+              onLastPage={goToLastPage}
             />
           )}
 
@@ -127,6 +131,24 @@ const PDFViewer = () => {
               background: "#f5f5f5", // 全屏时需要背景色
             }}
           >
+            {/* 顶部文件名 */}
+            <div
+              style={{
+                height: "48px",
+                padding: "0 24px",
+                display: "flex",
+                alignItems: "center",
+                background: "white",
+                borderBottom: "1px solid #e0e0e0",
+                fontSize: "16px",
+                fontWeight: 500,
+                color: "#333",
+                flexShrink: 0,
+              }}
+            >
+              文件名称：<span style={{ color: "#ff4d4f" }}>{file.name}</span>
+            </div>
+
             {/* PDF 画布 */}
             <PDFCanvas
               file={file}
@@ -141,13 +163,7 @@ const PDFViewer = () => {
 
             {/* 底部工具栏 */}
             <Toolbar
-              currentPage={currentPage}
-              numPages={numPages}
               scale={scale}
-              onFirstPage={goToFirstPage}
-              onPrevPage={goToPrevPage}
-              onNextPage={goToNextPage}
-              onLastPage={goToLastPage}
               onZoomIn={zoomIn}
               onZoomOut={zoomOut}
               onResetZoom={resetZoom}
