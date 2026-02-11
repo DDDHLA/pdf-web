@@ -11,6 +11,7 @@ import {
   BorderOutlined,
   SplitCellsOutlined,
   RotateRightOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 
 interface ToolbarProps {
@@ -27,8 +28,8 @@ interface ToolbarProps {
   onFitPage?: () => void;
   onFullscreen?: () => void;
   // 视图模式属性
-  viewMode: "single" | "double";
-  onToggleViewMode: (mode: "single" | "double") => void;
+  viewMode: "single" | "double" | "scroll";
+  onToggleViewMode: (mode: "single" | "double" | "scroll") => void;
   sidebarVisible: boolean;
   onToggleSidebar: () => void;
 }
@@ -95,6 +96,14 @@ export const Toolbar = ({
             title={sidebarVisible ? "隐藏侧边栏" : "显示侧边栏"}
             onClick={onToggleSidebar}
             style={{ background: sidebarVisible ? "#ccc" : "transparent" }}
+          />
+          <Button
+            type="text"
+            size="small"
+            icon={<UnorderedListOutlined />}
+            title="滚动视图"
+            onClick={() => onToggleViewMode("scroll")}
+            style={{ background: viewMode === "scroll" ? "#ccc" : "transparent" }}
           />
           <Button
             type="text"

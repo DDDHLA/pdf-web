@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { pdfjs } from "react-pdf";
 import { usePDFViewer } from "./hooks/usePDFViewer";
 import { UploadArea } from "./components/UploadArea";
@@ -92,7 +92,7 @@ const PDFViewer = () => {
         availableWidth,
         availableHeight,
         targetWidth,
-        pageDimensions.height
+        pageDimensions.height,
       );
     }
   };
@@ -102,7 +102,9 @@ const PDFViewer = () => {
     if (viewerRef.current) {
       if (!document.fullscreenElement) {
         viewerRef.current.requestFullscreen().catch((err) => {
-          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+          console.error(
+            `Error attempting to enable fullscreen: ${err.message}`,
+          );
         });
       } else {
         document.exitFullscreen();

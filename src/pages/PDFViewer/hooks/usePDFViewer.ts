@@ -6,7 +6,7 @@ export const usePDFViewer = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
   const [rotation, setRotation] = useState<number>(0);
-  const [viewMode, setViewMode] = useState<'single' | 'double'>('single');
+  const [viewMode, setViewMode] = useState<'single' | 'double' | 'scroll'>('single');
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
   // 文件上传处理
